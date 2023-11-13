@@ -44,7 +44,19 @@ const leerDatosCurso: (curso: HTMLDivElement) => void = (curso: HTMLDivElement) 
         id: (curso.querySelector('a') as HTMLAnchorElement).getAttribute('data-id') as string,
         cantidad: 1
     };
-    articulosCarrito = [...articulosCarrito, infoCurso];
+
+    let existe:boolean = articulosCarrito.some(curso => curso.id === infoCurso.id );
+    console.log(existe);
+    if (existe) {
+        articulosCarrito.forEach(curso => {
+            if (curso.id === infoCurso.id) {
+                curso.cantidad ++;
+            }
+        });
+    }else{
+        articulosCarrito = [...articulosCarrito, infoCurso];
+    }
+    console.log(articulosCarrito);
     carritoHTML();
 
 }

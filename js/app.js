@@ -35,7 +35,19 @@ var leerDatosCurso = function (curso) {
         id: curso.querySelector('a').getAttribute('data-id'),
         cantidad: 1
     };
-    articulosCarrito = __spreadArray(__spreadArray([], articulosCarrito, true), [infoCurso], false);
+    var existe = articulosCarrito.some(function (curso) { return curso.id === infoCurso.id; });
+    console.log(existe);
+    if (existe) {
+        articulosCarrito.forEach(function (curso) {
+            if (curso.id === infoCurso.id) {
+                curso.cantidad++;
+            }
+        });
+    }
+    else {
+        articulosCarrito = __spreadArray(__spreadArray([], articulosCarrito, true), [infoCurso], false);
+    }
+    console.log(articulosCarrito);
     carritoHTML();
 };
 var cargarEventListeners = function () {
