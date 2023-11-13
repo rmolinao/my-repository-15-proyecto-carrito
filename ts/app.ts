@@ -22,9 +22,16 @@ const limpiarHTML: () => void = () => {
 const carritoHTML: () => void = () => {
     limpiarHTML();
     articulosCarrito.forEach((curso: CursoInfo) => {
+        const {inmagen,titulo,precio,cantidad,id} = curso;
         const row = document.createElement('tr') as HTMLTableRowElement;
         row.innerHTML = `
-            <td>${curso.titulo}</td>
+            <td> <img src="${inmagen}" width="100"></td>
+            <td>${titulo}</td>
+            <td>${precio}</td>
+            <td>${cantidad}</td>
+            <td>
+                <a href="#" class="borrar-curso" data-id=${id}> X </a
+            </td>
             `;
         contenedorCarrito.appendChild(row);
     });

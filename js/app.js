@@ -21,8 +21,9 @@ var limpiarHTML = function () {
 var carritoHTML = function () {
     limpiarHTML();
     articulosCarrito.forEach(function (curso) {
+        var inmagen = curso.inmagen, titulo = curso.titulo, precio = curso.precio, cantidad = curso.cantidad, id = curso.id;
         var row = document.createElement('tr');
-        row.innerHTML = "\n            <td>".concat(curso.titulo, "</td>\n            ");
+        row.innerHTML = "\n            <td> <img src=\"".concat(inmagen, "\" width=\"100\"></td>\n            <td>").concat(titulo, "</td>\n            <td>").concat(precio, "</td>\n            <td>").concat(cantidad, "</td>\n            <td>\n                <a href=\"#\" class=\"borrar-curso\" data-id=").concat(id, "> X </a\n            </td>\n            ");
         contenedorCarrito.appendChild(row);
     });
 };
