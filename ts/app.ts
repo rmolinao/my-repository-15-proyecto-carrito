@@ -63,7 +63,6 @@ const eliminarCurso = (elemento:MouseEvent) => {
     if ((elemento.target as HTMLElement).classList.contains('borrar-curso')) {
         const cursoId = (elemento.target as HTMLElement).getAttribute('data-id') as string;
         articulosCarrito = articulosCarrito.filter((curso) => curso.id !== cursoId );
-        console.log(articulosCarrito);
         carritoHTML();
 
     }
@@ -73,7 +72,6 @@ const agregarCurso = (elemento: MouseEvent) => {
     if ((elemento.target as HTMLElement).classList.contains('agregar-carrito')) {
         const cursoSeleccionado: HTMLDivElement = (elemento.target as HTMLAnchorElement).parentElement!.parentElement as HTMLDivElement;
         leerDatosCurso(cursoSeleccionado);
-        console.log(articulosCarrito);
         carritoHTML();
     }
 };
@@ -85,7 +83,12 @@ const cargarEventListeners: () => void = () => {
     if (carrito) {
         carrito.addEventListener('click', eliminarCurso);
     }
-
+    if (vaciarCarritoBtn) {
+        vaciarCarritoBtn.addEventListener('click', () => {
+            articulosCarrito = [];
+            limpiarHTML();
+        });
+    }
 };
 
 cargarEventListeners();
