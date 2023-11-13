@@ -36,7 +36,6 @@ var leerDatosCurso = function (curso) {
         cantidad: 1
     };
     var existe = articulosCarrito.some(function (curso) { return curso.id === infoCurso.id; });
-    console.log(existe);
     if (existe) {
         articulosCarrito.forEach(function (curso) {
             if (curso.id === infoCurso.id) {
@@ -47,18 +46,31 @@ var leerDatosCurso = function (curso) {
     else {
         articulosCarrito = __spreadArray(__spreadArray([], articulosCarrito, true), [infoCurso], false);
     }
-    console.log(articulosCarrito);
-    carritoHTML();
+};
+var eliminarCurso = function (elemento) {
+    elemento.preventDefault();
+    if (elemento.target.classList.contains('borrar-curso')) {
+        var cursoId_1 = elemento.target.getAttribute('data-id');
+        articulosCarrito = articulosCarrito.filter(function (curso) { return curso.id !== cursoId_1; });
+        console.log(articulosCarrito);
+        carritoHTML();
+    }
+};
+var agregarCurso = function (elemento) {
+    elemento.preventDefault();
+    if (elemento.target.classList.contains('agregar-carrito')) {
+        var cursoSeleccionado = elemento.target.parentElement.parentElement;
+        leerDatosCurso(cursoSeleccionado);
+        console.log(articulosCarrito);
+        carritoHTML();
+    }
 };
 var cargarEventListeners = function () {
     if (listaCursos) {
-        listaCursos.addEventListener('click', function (e) {
-            e.preventDefault();
-            if (e.target.classList.contains('agregar-carrito')) {
-                var cursoSeleccionado = e.target.parentElement.parentElement;
-                leerDatosCurso(cursoSeleccionado);
-            }
-        });
+        listaCursos.addEventListener('click', agregarCurso);
+    }
+    if (carrito) {
+        carrito.addEventListener('click', eliminarCurso);
     }
 };
 cargarEventListeners();

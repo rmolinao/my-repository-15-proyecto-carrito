@@ -46,7 +46,7 @@ const leerDatosCurso: (curso: HTMLDivElement) => void = (curso: HTMLDivElement) 
     };
 
     let existe:boolean = articulosCarrito.some(curso => curso.id === infoCurso.id );
-    console.log(existe);
+
     if (existe) {
         articulosCarrito.forEach(curso => {
             if (curso.id === infoCurso.id) {
@@ -56,21 +56,36 @@ const leerDatosCurso: (curso: HTMLDivElement) => void = (curso: HTMLDivElement) 
     }else{
         articulosCarrito = [...articulosCarrito, infoCurso];
     }
-    console.log(articulosCarrito);
-    carritoHTML();
 
 }
+const eliminarCurso = (elemento:MouseEvent) => {
+    elemento.preventDefault();
+    if ((elemento.target as HTMLElement).classList.contains('borrar-curso')) {
+        const cursoId = (elemento.target as HTMLElement).getAttribute('data-id') as string;
+        articulosCarrito = articulosCarrito.filter((curso) => curso.id !== cursoId );
+        console.log(articulosCarrito);
+        carritoHTML();
 
+    }
+};
+const agregarCurso = (elemento: MouseEvent) => {
+    elemento.preventDefault();
+    if ((elemento.target as HTMLElement).classList.contains('agregar-carrito')) {
+        const cursoSeleccionado: HTMLDivElement = (elemento.target as HTMLAnchorElement).parentElement!.parentElement as HTMLDivElement;
+        leerDatosCurso(cursoSeleccionado);
+        console.log(articulosCarrito);
+        carritoHTML();
+    }
+};
 const cargarEventListeners: () => void = () => {
     if (listaCursos) {
-        listaCursos.addEventListener('click', (e: MouseEvent) => {
-            e.preventDefault();
-            if ((e.target as HTMLElement).classList.contains('agregar-carrito')) {
-                const cursoSeleccionado: HTMLDivElement = (e.target as HTMLAnchorElement).parentElement!.parentElement as HTMLDivElement;
-                leerDatosCurso(cursoSeleccionado);
-            }
-        });
+        listaCursos.addEventListener('click', agregarCurso);
     }
+
+    if (carrito) {
+        carrito.addEventListener('click', eliminarCurso);
+    }
+
 };
 
 cargarEventListeners();
