@@ -1,8 +1,10 @@
 
-const carrito: HTMLDivElement = document.getElementById("carrito") as HTMLDivElement;
-const contenedorCarrito: HTMLElement = document.querySelector("#lista-carrito tbody") as HTMLElement;
-const vaciarCarritoBtn: HTMLLinkElement = document.getElementById("vaciar-carrito") as HTMLLinkElement;
-const listaCursos: HTMLDivElement = document.getElementById("lista-cursos") as HTMLDivElement;
+const carrito = document.getElementById("carrito") as HTMLDivElement;
+const contenedorCarrito = document.querySelector("#lista-carrito tbody") as HTMLTableElement;
+const vaciarCarritoBtn = document.getElementById("vaciar-carrito") as HTMLAnchorElement;
+const listaCursos = document.getElementById("lista-cursos") as HTMLDivElement;
+
+let articulosCarrito: CursoInfo[] = [];
 
 interface CursoInfo {
     inmagen: string;
@@ -12,16 +14,32 @@ interface CursoInfo {
     cantidad: number;
 }
 
+const limpiarHTML: () => void = () => {
+    while ((contenedorCarrito as Node).firstChild as ChildNode) {
+        (contenedorCarrito as Node).removeChild(contenedorCarrito.firstChild as ChildNode);
+    }
+}
+const carritoHTML: () => void = () => {
+    limpiarHTML();
+    articulosCarrito.forEach((curso: CursoInfo) => {
+        const row = document.createElement('tr') as HTMLTableRowElement;
+        row.innerHTML = `
+            <td>${curso.titulo}</td>
+            `;
+        contenedorCarrito.appendChild(row);
+    });
+}
 const leerDatosCurso: (curso: HTMLDivElement) => void = (curso: HTMLDivElement) => {
-    console.log(curso);
     const infoCurso: CursoInfo = {
         inmagen: (curso.querySelector('img') as HTMLImageElement).src as string,
         titulo: (curso.querySelector('h4') as HTMLHeadElement).textContent as string,
         precio: (curso.querySelector('.precio span') as HTMLSpanElement).textContent as string,
-        id: (curso.querySelector('a') as HTMLAnchorElement).getAttribute('data-id')as string,
+        id: (curso.querySelector('a') as HTMLAnchorElement).getAttribute('data-id') as string,
         cantidad: 1
     };
-    console.log(infoCurso);
+    articulosCarrito = [...articulosCarrito, infoCurso];
+    carritoHTML();
+
 }
 
 const cargarEventListeners: () => void = () => {
@@ -34,7 +52,6 @@ const cargarEventListeners: () => void = () => {
             }
         });
     }
-
 };
 
 cargarEventListeners();
