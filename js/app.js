@@ -14,26 +14,24 @@ var vaciarCarritoBtn = document.getElementById("vaciar-carrito");
 var listaCursos = document.getElementById("lista-cursos");
 var articulosCarrito = [];
 var limpiarHTML = function () {
-    while (contenedorCarrito.firstChild) {
-        contenedorCarrito.removeChild(contenedorCarrito.firstChild);
-    }
+    contenedorCarrito.innerHTML = '';
 };
-var carritoHTML = function () {
+var renderizarCarrito = function () {
     limpiarHTML();
     articulosCarrito.forEach(function (curso) {
         var inmagen = curso.inmagen, titulo = curso.titulo, precio = curso.precio, cantidad = curso.cantidad, id = curso.id;
         var row = document.createElement('tr');
-        row.innerHTML = "\n            <td> <img src=\"".concat(inmagen, "\" width=\"100\"></td>\n            <td>").concat(titulo, "</td>\n            <td>").concat(precio, "</td>\n            <td>").concat(cantidad, "</td>\n            <td>\n                <a href=\"#\" class=\"borrar-curso\" data-id=").concat(id, "> X </a\n            </td>\n            ");
+        row.innerHTML = "\n            <td> <img src=\"".concat(inmagen, "\" width=\"100\"></td>\n            <td>").concat(titulo, "</td>\n            <td>").concat(precio, "</td>\n            <td>").concat(cantidad, "</td>\n            <td>\n                <a href=\"#\" class=\"borrar-curso\" data-id=\"").concat(id, "\"> X </a>\n            </td>\n        ");
         contenedorCarrito.appendChild(row);
     });
 };
-var leerDatosCurso = function (curso) {
+var obtenerDatosCurso = function (curso) {
     var infoCurso = {
         inmagen: curso.querySelector('img').src,
-        titulo: curso.querySelector('h4').textContent,
-        precio: curso.querySelector('.precio span').textContent,
-        id: curso.querySelector('a').getAttribute('data-id'),
-        cantidad: 1
+        titulo: curso.querySelector('h4').textContent || '',
+        precio: curso.querySelector('.precio span').textContent || '',
+        id: curso.querySelector('a').getAttribute('data-id') || '',
+        cantidad: 1,
     };
     var existe = articulosCarrito.some(function (curso) { return curso.id === infoCurso.id; });
     if (existe) {
@@ -46,21 +44,24 @@ var leerDatosCurso = function (curso) {
     else {
         articulosCarrito = __spreadArray(__spreadArray([], articulosCarrito, true), [infoCurso], false);
     }
+    return infoCurso;
 };
 var eliminarCurso = function (elemento) {
     elemento.preventDefault();
-    if (elemento.target.classList.contains('borrar-curso')) {
-        var cursoId_1 = elemento.target.getAttribute('data-id');
+    var elementoTarget = elemento.target;
+    if (elementoTarget.classList.contains('borrar-curso')) {
+        var cursoId_1 = elementoTarget.getAttribute('data-id') || '';
         articulosCarrito = articulosCarrito.filter(function (curso) { return curso.id !== cursoId_1; });
-        carritoHTML();
+        renderizarCarrito();
     }
 };
 var agregarCurso = function (elemento) {
     elemento.preventDefault();
-    if (elemento.target.classList.contains('agregar-carrito')) {
-        var cursoSeleccionado = elemento.target.parentElement.parentElement;
-        leerDatosCurso(cursoSeleccionado);
-        carritoHTML();
+    var elementoTarget = elemento.target;
+    if (elementoTarget.classList.contains('agregar-carrito')) {
+        var cursoSeleccionado = elementoTarget.parentElement.parentElement;
+        var cursoInfo = obtenerDatosCurso(cursoSeleccionado);
+        renderizarCarrito();
     }
 };
 var cargarEventListeners = function () {

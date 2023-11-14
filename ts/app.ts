@@ -1,10 +1,7 @@
-
 const carrito = document.getElementById("carrito") as HTMLDivElement;
 const contenedorCarrito = document.querySelector("#lista-carrito tbody") as HTMLTableElement;
 const vaciarCarritoBtn = document.getElementById("vaciar-carrito") as HTMLAnchorElement;
 const listaCursos = document.getElementById("lista-cursos") as HTMLDivElement;
-
-let articulosCarrito: CursoInfo[] = [];
 
 interface CursoInfo {
     inmagen: string;
@@ -14,68 +11,75 @@ interface CursoInfo {
     cantidad: number;
 }
 
-const limpiarHTML: () => void = () => {
-    while ((contenedorCarrito as Node).firstChild as ChildNode) {
-        (contenedorCarrito as Node).removeChild(contenedorCarrito.firstChild as ChildNode);
-    }
-}
-const carritoHTML: () => void = () => {
+let articulosCarrito: CursoInfo[] = [];
+
+const limpiarHTML = (): void => {
+    contenedorCarrito.innerHTML = '';
+};
+
+const renderizarCarrito = (): void => {
     limpiarHTML();
     articulosCarrito.forEach((curso: CursoInfo) => {
-        const {inmagen,titulo,precio,cantidad,id} = curso;
-        const row = document.createElement('tr') as HTMLTableRowElement;
+        const { inmagen, titulo, precio, cantidad, id } = curso;
+        const row = document.createElement('tr');
         row.innerHTML = `
             <td> <img src="${inmagen}" width="100"></td>
             <td>${titulo}</td>
             <td>${precio}</td>
             <td>${cantidad}</td>
             <td>
-                <a href="#" class="borrar-curso" data-id=${id}> X </a
+                <a href="#" class="borrar-curso" data-id="${id}"> X </a>
             </td>
-            `;
+        `;
         contenedorCarrito.appendChild(row);
     });
-}
-const leerDatosCurso: (curso: HTMLDivElement) => void = (curso: HTMLDivElement) => {
+};
+
+const obtenerDatosCurso = (curso: HTMLDivElement): CursoInfo => {
     const infoCurso: CursoInfo = {
-        inmagen: (curso.querySelector('img') as HTMLImageElement).src as string,
-        titulo: (curso.querySelector('h4') as HTMLHeadElement).textContent as string,
-        precio: (curso.querySelector('.precio span') as HTMLSpanElement).textContent as string,
-        id: (curso.querySelector('a') as HTMLAnchorElement).getAttribute('data-id') as string,
-        cantidad: 1
+        inmagen: curso.querySelector('img')!.src,
+        titulo: curso.querySelector('h4')!.textContent || '',
+        precio: (curso.querySelector('.precio span') as HTMLSpanElement).textContent || '',
+        id: curso.querySelector('a')!.getAttribute('data-id') || '',
+        cantidad: 1,
     };
 
-    let existe:boolean = articulosCarrito.some(curso => curso.id === infoCurso.id );
+    const existe = articulosCarrito.some((curso) => curso.id === infoCurso.id);
 
     if (existe) {
-        articulosCarrito.forEach(curso => {
+        articulosCarrito.forEach((curso) => {
             if (curso.id === infoCurso.id) {
-                curso.cantidad ++;
+                curso.cantidad++;
             }
         });
-    }else{
+    } else {
         articulosCarrito = [...articulosCarrito, infoCurso];
     }
 
-}
-const eliminarCurso = (elemento:MouseEvent) => {
-    elemento.preventDefault();
-    if ((elemento.target as HTMLElement).classList.contains('borrar-curso')) {
-        const cursoId = (elemento.target as HTMLElement).getAttribute('data-id') as string;
-        articulosCarrito = articulosCarrito.filter((curso) => curso.id !== cursoId );
-        carritoHTML();
+    return infoCurso;
+};
 
-    }
-};
-const agregarCurso = (elemento: MouseEvent) => {
+const eliminarCurso = (elemento: MouseEvent): void => {
     elemento.preventDefault();
-    if ((elemento.target as HTMLElement).classList.contains('agregar-carrito')) {
-        const cursoSeleccionado: HTMLDivElement = (elemento.target as HTMLAnchorElement).parentElement!.parentElement as HTMLDivElement;
-        leerDatosCurso(cursoSeleccionado);
-        carritoHTML();
+    const elementoTarget = elemento.target as HTMLElement;
+    if (elementoTarget.classList.contains('borrar-curso')) {
+        const cursoId = elementoTarget.getAttribute('data-id') || '';
+        articulosCarrito = articulosCarrito.filter((curso) => curso.id !== cursoId);
+        renderizarCarrito();
     }
 };
-const cargarEventListeners: () => void = () => {
+
+const agregarCurso = (elemento: MouseEvent): void => {
+    elemento.preventDefault();
+    const elementoTarget = elemento.target as HTMLElement;
+    if (elementoTarget.classList.contains('agregar-carrito')) {
+        const cursoSeleccionado = elementoTarget.parentElement!.parentElement as HTMLDivElement;
+        const cursoInfo = obtenerDatosCurso(cursoSeleccionado);
+        renderizarCarrito();
+    }
+};
+
+const cargarEventListeners = (): void => {
     if (listaCursos) {
         listaCursos.addEventListener('click', agregarCurso);
     }
